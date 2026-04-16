@@ -8,3 +8,4 @@ if __name__ == "__main__":
     main()
 # Basic image upload function built
 # Edge detection modules implemented
+# Analyzer logic and thermal detection
