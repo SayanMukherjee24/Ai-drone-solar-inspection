@@ -217,8 +217,8 @@ def estimate_image_suitability(image_rgb):
 
 
 def main():
-    st.set_page_config(page_title="AI Drone Solar Inspection Demo", layout="wide")
-    st.title("🚁 AI Drone Solar Inspection Demo")
+    st.set_page_config(page_title="AI Drone Solar Inspection", layout="wide")
+    st.title("🚁 AI Drone Solar Inspection")
     st.caption(
         "Prototype of a 3-stage agentic UAV pipeline (Finder → Inspector → Electrician)."
     )
