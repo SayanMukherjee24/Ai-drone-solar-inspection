@@ -324,12 +324,12 @@ def main():
             sample_name = st.selectbox("Choose public image", list(PUBLIC_IMAGES.keys()))
             col_load, col_random = st.columns(2)
             with col_load:
-                if st.button("Load selected public image", width='stretch'):
+                if st.button("Load selected public image", use_container_width=True):
                     st.session_state.public_image_rgb = load_image_from_url(PUBLIC_IMAGES[sample_name])
                     if st.session_state.public_image_rgb is None:
                         st.error("Failed to load public image. Try another one or upload manually.")
             with col_random:
-                if st.button("Load random public sample", width='stretch'):
+                if st.button("Load random public sample", use_container_width=True):
                     random_name = random.choice(list(PUBLIC_IMAGES.keys()))
                     st.session_state.public_image_rgb = load_image_from_url(PUBLIC_IMAGES[random_name])
                     if st.session_state.public_image_rgb is None:
@@ -383,7 +383,7 @@ def main():
 
             col_g1, col_g2, col_g3 = st.columns(3)
             with col_g1:
-                if st.button("Load selected GitHub sample", width='stretch'):
+                if st.button("Load selected GitHub sample", use_container_width=True):
                     cached_path = download_and_cache_image(selected_url, selected_label.split("/")[-1])
                     if cached_path is None:
                         st.error("GitHub download failed. Check internet, then retry.")
@@ -392,7 +392,7 @@ def main():
                         if st.session_state.github_image_rgb is None:
                             st.error("Cached file is not a readable image.")
             with col_g2:
-                if st.button("Load random GitHub sample", width='stretch'):
+                if st.button("Load random GitHub sample", use_container_width=True):
                     random_label = random.choice(list(github_options.keys()))
                     random_url = github_options[random_label]
                     cached_path = download_and_cache_image(random_url, random_label.split("/")[-1])
@@ -411,7 +411,7 @@ def main():
                     label_visibility="collapsed",
                     key="local_dataset_choice",
                 )
-                if st.button("Load cached file", width='stretch'):
+                if st.button("Load cached file", use_container_width=True):
                     if local_choice != "None":
                         st.session_state.github_image_rgb = load_image_from_local_path(
                             DATASET_CACHE_DIR / local_choice
@@ -452,7 +452,7 @@ def main():
 
     hotspots, hotspot_threshold = detect_hotspots(panel_roi)
     hotspot_found = len(hotspots) > 0
-    hotspot_status = "Detected 🔴" if hotspot_found else "None 🟢"
+    hotspot_status = "Detected 🔵" if hotspot_found else "None 🟢"
 
     progress.progress(100, text="Intelligence loop concluded.")
     stage_status.success("✅ **Sequence Complete.** Autonomous analysis reporting below.")
@@ -470,14 +470,14 @@ def main():
     )
 
     for cx, cy, r in hotspots:
-        cv2.circle(annotated, (x + cx, y + cy), r + 4, (255, 43, 86), 4)
+        cv2.circle(annotated, (x + cx, y + cy), r + 4, (255, 127, 43), 4) # BGR for a vibrant blue
         cv2.putText(
             annotated,
             "Thermal Anomaly",
             (x + cx + 12, y + cy - 8),
             cv2.FONT_HERSHEY_DUPLEX,
             0.6,
-            (255, 43, 86),
+            (255, 127, 43),
             2,
         )
 
@@ -509,12 +509,12 @@ def main():
     with colA:
         with st.container(border=True):
             st.markdown("**Original Telemetry**")
-            st.image(image_rgb, width='stretch')
+            st.image(image_rgb, use_container_width=True)
             st.caption(f"📍 GPS: {latitude}, {longitude} | 🚁 Alt: {altitude}m")
     with colB:
         with st.container(border=True):
             st.markdown("**AI Augmented Target Map**")
-            st.image(annotated, width='stretch')
+            st.image(annotated, use_container_width=True)
             st.caption(f"🧭 Mode: {'Fallback (Center ROI)' if used_fallback else 'Edge Contour Targeting'}")
 
     st.markdown("---")
