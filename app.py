@@ -217,17 +217,47 @@ def estimate_image_suitability(image_rgb):
 
 
 def main():
-    st.set_page_config(page_title="AI Drone Solar Inspection", layout="wide")
-    st.title("🚁 AI Drone Solar Inspection")
-    st.caption(
-        "Prototype of a 3-stage agentic UAV pipeline (Finder → Inspector → Electrician)."
-    )
+    st.set_page_config(page_title="AI Drone Solar Inspection", layout="wide", page_icon="🚁")
+    
+    # Custom CSS for glassmorphism and modern gradient text
+    st.markdown("""
+        <style>
+        .gradient-text {
+            font-size: 3rem;
+            font-weight: 800;
+            background: -webkit-linear-gradient(45deg, #00C9FF, #92FE9D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0px;
+        }
+        .sub-text {
+            font-size: 1.1rem;
+            color: #888888;
+            margin-bottom: 30px;
+        }
+        .stButton>button {
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .stButton>button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 201, 255, 0.4);
+            border-color: #00C9FF;
+            color: #00C9FF;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-    st.subheader("Upload Image")
-    source = st.radio(
-        "Select image source",
-        ["Upload your own", "Use public demo imagery", "Use GitHub dataset imagery"],
-    )
+    st.markdown('<p class="gradient-text">🚁 Agentic AI Solar Drone</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sub-text">Prototype of a 3-stage autonomous UAV pipeline (Finder → Inspector → Electrician)</p>', unsafe_allow_html=True)
+
+    with st.container(border=True):
+        st.subheader("📸 Mission Control: Image Feed", anchor=False)
+        source = st.radio(
+            "Select Telemetry Source",
+            ["Upload Your Own", "Use Public Demo Imagery", "Use GitHub Dataset Imagery"],
+            horizontal=True,
+        )
 
     if "public_image_rgb" not in st.session_state:
         st.session_state.public_image_rgb = None
@@ -235,14 +265,14 @@ def main():
         st.session_state.github_image_rgb = None
 
     image_rgb = None
-    if source == "Upload your own":
+    if source == "Upload Your Own":
         uploaded = st.file_uploader("Upload JPG/PNG drone image", type=["jpg", "jpeg", "png"])
         if uploaded is not None:
             image_rgb = load_image_from_upload(uploaded)
             if image_rgb is None:
-                st.error("Could not read uploaded image.")
+                st.error("Could not read uploaded image. Please try a different file.")
     else:
-        if source == "Use public demo imagery":
+        if source == "Use Public Demo Imagery":
             sample_name = st.selectbox("Choose public image", list(PUBLIC_IMAGES.keys()))
             col_load, col_random = st.columns(2)
             with col_load:
@@ -344,15 +374,17 @@ def main():
             image_rgb = st.session_state.github_image_rgb
 
     if image_rgb is None:
-        st.info("Upload an image or load a public sample to start inspection.")
+        st.info("📡 Awaiting feed. Upload an image or select a demo sample to initialize agents.")
         return
 
-    st.subheader("Agent Pipeline Status")
-    progress = st.progress(0, text="Initializing drone AI agents...")
+    st.markdown("---")
+    st.subheader("⚙️ Agent Pipeline Status", anchor=False)
+    progress = st.progress(0, text="Booting AI systems...")
     stage_status = st.empty()
-    stage_status.info("Stage 1/3 - Finder: Detecting panel region...")
+    
+    stage_status.info("🔍 **Stage 1/3 (Finder):** Scanning landscape for solar panels...")
     time.sleep(0.35)
-    progress.progress(25, text="Finder agent running...")
+    progress.progress(25, text="Finder agent isolated target...")
 
     suitability, scene_edge_density, scene_contrast = estimate_image_suitability(image_rgb)
     panel_box, used_fallback = detect_panel_region(image_rgb)
@@ -360,44 +392,44 @@ def main():
     panel_roi = image_rgb[y : y + bh, x : x + bw]
     panel_detect_score = 0.45 if used_fallback else 0.85
 
-    stage_status.info("Stage 2/3 - Inspector: Classifying panel fault...")
+    stage_status.info("🔬 **Stage 2/3 (Inspector):** Analyzing crystalline silicon surface condition...")
     time.sleep(0.35)
-    progress.progress(60, text="Inspector agent running...")
+    progress.progress(60, text="Inspector agent assessing damage...")
 
     fault_label, confidence, metrics = classify_fault(panel_roi, panel_detect_score)
 
-    stage_status.info("Stage 3/3 - Electrician: Checking thermal hotspots...")
+    stage_status.info("⚡ **Stage 3/3 (Electrician):** Thermographic sweep for overheating cells...")
     time.sleep(0.35)
-    progress.progress(85, text="Electrician agent running...")
+    progress.progress(85, text="Electrician analyzing thermal map...")
 
     hotspots, hotspot_threshold = detect_hotspots(panel_roi)
     hotspot_found = len(hotspots) > 0
-    hotspot_status = "Yes" if hotspot_found else "No"
+    hotspot_status = "Detected 🔴" if hotspot_found else "None 🟢"
 
-    progress.progress(100, text="Inspection complete")
-    stage_status.success("All agents completed successfully.")
+    progress.progress(100, text="Intelligence loop concluded.")
+    stage_status.success("✅ **Sequence Complete.** Autonomous analysis reporting below.")
 
     annotated = image_rgb.copy()
-    cv2.rectangle(annotated, (x, y), (x + bw, y + bh), (0, 255, 0), 3)
+    cv2.rectangle(annotated, (x, y), (x + bw, y + bh), (43, 255, 127), 4)
     cv2.putText(
         annotated,
-        "Solar Panel Detected",
+        "Target Locked",
         (x, max(25, y - 10)),
-        cv2.FONT_HERSHEY_SIMPLEX,
+        cv2.FONT_HERSHEY_DUPLEX,
         0.8,
-        (0, 255, 0),
+        (43, 255, 127),
         2,
     )
 
     for cx, cy, r in hotspots:
-        cv2.circle(annotated, (x + cx, y + cy), r, (255, 0, 0), 3)
+        cv2.circle(annotated, (x + cx, y + cy), r + 4, (255, 43, 86), 4)
         cv2.putText(
             annotated,
-            "Hotspot Detected",
-            (x + cx + 5, y + cy - 5),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.55,
-            (255, 0, 0),
+            "Thermal Anomaly",
+            (x + cx + 12, y + cy - 8),
+            cv2.FONT_HERSHEY_DUPLEX,
+            0.6,
+            (255, 43, 86),
             2,
         )
 
@@ -407,26 +439,38 @@ def main():
     longitude = round(random.uniform(-180, 180), 6)
     altitude = round(random.uniform(10, 50), 1)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Original Image")
-        st.image(image_rgb, use_container_width=True)
-    with col2:
-        st.subheader("Processed Output")
-        st.image(annotated, use_container_width=True)
+    st.markdown("---")
+    st.subheader("📊 Tactical Analysis Report", anchor=False)
+    
+    # Beautiful metrics layout
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Panel Integrity", fault_label)
+    c2.metric("Agent Confidence", f"{confidence * 100:.1f}%")
+    c3.metric("Thermal Hotspot", hotspot_status)
+    c4.metric("Suitability Score", f"{suitability * 100:.0f}%")
 
-    st.subheader("Inspection Results")
-    st.markdown(f"**Panel:** Detected")
-    st.markdown(f"**Fault:** {fault_label}")
-    st.markdown(f"**Confidence:** {confidence:.2f}")
-    st.markdown(f"**Hotspot:** {hotspot_status}")
-    st.markdown(f"**Decision:** {decision.replace('Agent Decision: ', '')}")
-    st.markdown(
-        f"**Detection Mode:** {'Fallback (center ROI)' if used_fallback else 'Contour-based panel localization'}"
-    )
-    st.success(decision)
+    if "Maintenance Required" in decision:
+        st.error(f"🚨 **{decision}**")
+    elif "Healthy" in decision:
+        st.success(f"✅ **{decision}**")
+    else:
+        st.warning(f"⚠️ **{decision}**")
 
-    with st.expander("Advanced Diagnostics (Demo Heuristics)"):
+    # Image comparison side-by-side inside containers
+    colA, colB = st.columns(2)
+    with colA:
+        with st.container(border=True):
+            st.markdown("**Original Telemetry**")
+            st.image(image_rgb, use_container_width=True)
+            st.caption(f"📍 GPS: {latitude}, {longitude} | 🚁 Alt: {altitude}m")
+    with colB:
+        with st.container(border=True):
+            st.markdown("**AI Augmented Target Map**")
+            st.image(annotated, use_container_width=True)
+            st.caption(f"🧭 Mode: {'Fallback (Center ROI)' if used_fallback else 'Edge Contour Targeting'}")
+
+    st.markdown("---")
+    with st.expander("🛠️ Advanced Agent Heuristics & Thresholds"):
         st.write(f"Scene suitability score: `{suitability:.2f}`")
         st.write(f"Scene edge density: `{scene_edge_density:.3f}`")
         st.write(f"Scene contrast: `{scene_contrast:.2f}`")
@@ -436,14 +480,10 @@ def main():
         st.write(f"Hotspot percentile threshold: `{hotspot_threshold:.2f}`")
 
     if suitability < 0.30:
-        st.warning(
-            "Image may not be ideal for solar inspection (low scene suitability). "
-            "Use clearer aerial panel imagery for better reliability."
+        st.toast(
+            "⚠️ Image may not be ideal for solar inspection (low scene suitability). "
+            "Use aerial panel imagery.", icon="⚠️"
         )
-
-    st.subheader("Drone Metadata")
-    st.markdown(f"**GPS:** {latitude}, {longitude}")
-    st.markdown(f"**Altitude:** {altitude} m")
 
 
 if __name__ == "__main__":
