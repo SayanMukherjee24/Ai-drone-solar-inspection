@@ -252,7 +252,7 @@ def main():
     st.markdown('<p class="sub-text">Prototype of a 3-stage autonomous UAV pipeline (Finder → Inspector → Electrician)</p>', unsafe_allow_html=True)
 
     with st.container(border=True):
-        st.subheader("📸 Mission Control: Image Feed", anchor=False)
+        st.subheader("🚁 AI Drone Solar Inspection", anchor=False)
         source = st.radio(
             "Select Telemetry Source",
             ["Upload Your Own", "Use Public Demo Imagery", "Use GitHub Dataset Imagery"],
