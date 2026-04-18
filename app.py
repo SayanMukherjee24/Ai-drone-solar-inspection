@@ -219,7 +219,7 @@ def estimate_image_suitability(image_rgb):
 def main():
     st.set_page_config(page_title="AI Drone Solar Inspection", layout="wide", page_icon="🚁")
     
-    # Custom CSS for glassmorphism and modern gradient text
+    # Advanced CSS for glassmorphism, metrics, and modern gradient text
     st.markdown("""
         <style>
         .gradient-text {
@@ -229,20 +229,68 @@ def main():
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0px;
+            letter-spacing: -1px;
         }
         .sub-text {
             font-size: 1.1rem;
-            color: #888888;
+            color: #A0AEC0;
             margin-bottom: 30px;
+            font-weight: 400;
         }
+        
+        /* Modernized button styling */
         .stButton>button {
             border-radius: 20px;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 201, 255, 0.3);
+            background: rgba(19, 26, 42, 0.8) !important;
+            color: #E2E8F0 !important;
         }
         .stButton>button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 201, 255, 0.4);
-            border-color: #00C9FF;
+            box-shadow: 0 4px 15px rgba(0, 201, 255, 0.4);
+            border-color: #00C9FF !important;
+            color: #00C9FF !important;
+        }
+        
+        /* Glassmorphism Metric Cards */
+        [data-testid="stMetric"] {
+            background: rgba(19, 26, 42, 0.6);
+            border: 1px solid rgba(0, 201, 255, 0.15);
+            border-radius: 15px;
+            padding: 15px 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.2s ease-in-out;
+        }
+        [data-testid="stMetric"]:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 201, 255, 0.4);
+        }
+        
+        /* Softer labels for metrics */
+        [data-testid="stMetricLabel"] {
+            font-size: 0.95rem;
+            color: #94A3B8;
+        }
+        
+        /* Crisp values for metrics */
+        [data-testid="stMetricValue"] {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #F8FAFC;
+        }
+        
+        /* Floating images with rounded corners */
+        [data-testid="stImage"] img {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        
+        /* Tweak expander styling */
+        .streamlit-expanderHeader {
+            font-weight: 600;
             color: #00C9FF;
         }
         </style>

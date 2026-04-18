@@ -1,0 +1,16 @@
+[theme]
+# Force a sleek dark mode appearance
+base = "dark"
+
+# Rich, deep space-blue background for premium feel
+backgroundColor = "#0B0F19"
+secondaryBackgroundColor = "#131A2A"
+
+# High contrast primary neon blue
+primaryColor = "#00C9FF"
+
+# Soft slate-grey text for easy readability
+textColor = "#E2E8F0"
+
+[client]
+toolbarMode = "minimal"
